@@ -6,12 +6,14 @@
 #include <stdio.h>
 #include "BaseStruct.h"
 #include "Mem-IO.h"
-struct MyCell** ThinCell, DenseCell;
-struct MyNode** ThinNode, DenseNode;
-int niThin=51, njThin=51;
+struct MyCell*** ThinCell, DenseCell;
+struct MyNode*** ThinNode, DenseNode;
+int niThin = 51, njThin = 51, nkThin = 2;
 int niDense, njDense;
 
 int main() {
-  MemAlloc(ThinCell, ThinNode, niThin, njThin);
+  MemAlloc(ThinCell, ThinNode, niThin, njThin, nkThin);
+
+  MemFree(ThinCell, ThinNode);
   return 0;
 }

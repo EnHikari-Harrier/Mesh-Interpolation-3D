@@ -5,11 +5,11 @@
 #include "BaseStruct.h"
 
 _Bool IsInCell(struct MyCell Cell0, struct MyNode Node0) {
-  Cell0.Node[0]->Pos[0] = 5;
+  //Cell0.Node[0]->Pos[0] = 5;
   return true;
 }
 
-_Bool IsOverLine(double Point1[2], double Point2[2], double Point0[2]) {
+_Bool IsOverLine(double Point1[3], double Point2[3], double Point0[3]) {
   double a, b, c;
   a = Point1[1] - Point2[1];
   b = Point1[0] - Point2[0];
