@@ -124,6 +124,9 @@
     <ClCompile Include="src\Mem-IO.c" />
     <ClCompile Include="src\Mesh-Interpolation-3D.c" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="input\Configure" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
