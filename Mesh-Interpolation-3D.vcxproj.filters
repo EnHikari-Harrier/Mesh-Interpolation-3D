@@ -21,7 +21,7 @@
     <ClInclude Include="src\Functions.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Mem-IO.h">
+    <ClInclude Include="src\ArrayGen.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,10 +29,10 @@
     <ClCompile Include="src\Functions.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mem-IO.c">
+    <ClCompile Include="src\Mesh-Interpolation-3D.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh-Interpolation-3D.c">
+    <ClCompile Include="src\ArrayGen.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

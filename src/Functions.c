@@ -4,21 +4,8 @@
 #include <stdbool.h>
 #include "BaseStruct.h"
 
-bool IsInCell(struct MyNode Node0, struct MyCell Cell0) {
-  //Cell0.Node[0]->Pos[0] = 5;
-  return true;
-}
-
-bool IsOverLine(double Point1[3], double Point2[3], double Point0[3]) {
-  double a, b, c;
-  a = Point1[1] - Point2[1];
-  b = Point1[0] - Point2[0];
-  c = -Point1[0] * Point2[1] + Point2[0] * Point1[1];
-  return (a * Point0[0] + b * Point0[1] + c > 0);
-}
-
-int Node2Face(struct MyNode Node0, struct MyCell Cell0, int FaceID) {
-  struct MyNode NodeList[3];
+int Node2Face(double CenterP[3], struct MyCell Cell0, int FaceID) {
+  struct MyNode NodeList[4];
   double a, b, c, d;
   double result;
   int n;
@@ -32,13 +19,34 @@ int Node2Face(struct MyNode Node0, struct MyCell Cell0, int FaceID) {
   c = (NodeList[1].Pos[0] - NodeList[0].Pos[0])*(NodeList[2].Pos[1] - NodeList[0].Pos[1])
     - (NodeList[1].Pos[1] - NodeList[0].Pos[1])*(NodeList[2].Pos[0] - NodeList[0].Pos[0]);
   d = -(a * NodeList[0].Pos[0] + b * NodeList[0].Pos[1] + c * NodeList[0].Pos[2]);
-  result = a * Node0.Pos[0] + b * Node0.Pos[1] + c * Node0.Pos[2] + d;
+  result = a * CenterP[0] + b * CenterP[1] + c * CenterP[2] + d;
   if (result > 0.f)
     return 1;
   else if (result < 0.f)
     return -1;
   else
     return 0;
+}
+
+bool IsInCell(struct MyNode Node0, struct MyCell Cell0) {
+  int n;
+  int sign0, sign1;
+  for (n = 0; n < 6; n++) {
+    sign0 = Node2Face(Node0.Pos, Cell0, n);
+    sign1 = Node2Face(Cell0.Center, Cell0, n);
+    if (sign0*sign1 < 0.f) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool IsOverLine(double Point1[3], double Point2[3], double Point0[3]) {
+  double a, b, c;
+  a = Point1[1] - Point2[1];
+  b = Point1[0] - Point2[0];
+  c = -Point1[0] * Point2[1] + Point2[0] * Point1[1];
+  return (a * Point0[0] + b * Point0[1] + c > 0);
 }
 
 

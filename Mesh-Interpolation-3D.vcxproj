@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{04814F2F-851A-4713-8F11-5A224D2B5751}</ProjectGuid>
     <RootNamespace>MeshInterpolation3D</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -84,6 +84,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <C99Support>true</C99Support>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -117,11 +118,11 @@
   <ItemGroup>
     <ClInclude Include="src\BaseStruct.h" />
     <ClInclude Include="src\Functions.h" />
-    <ClInclude Include="src\Mem-IO.h" />
+    <ClInclude Include="src\ArrayGen.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Functions.c" />
-    <ClCompile Include="src\Mem-IO.c" />
+    <ClCompile Include="src\ArrayGen.c" />
     <ClCompile Include="src\Mesh-Interpolation-3D.c" />
   </ItemGroup>
   <ItemGroup>
