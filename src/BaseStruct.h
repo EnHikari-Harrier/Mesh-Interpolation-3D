@@ -4,23 +4,22 @@
 
 #ifndef __BASESTRUCT_H_
 #define __BASESTRUCT_H_
+#define NC 8
 
 struct MyNode {
   int i, j, k;
   double Pos[3];
+  double vv[NC];
   struct MyCell* atCell;    //Which THINCELL am i in?
 };
 
 struct MyCell {
   int i, j, k;
-  double vv[8];             //fluid varibles
+  double vv[NC];            //fluid varibles
   double Center[3];         //center coordinate of cell
   struct MyNode* Node[8];
   struct MyNode* FaceNode[6][4];
 };
-
-#endif // __BASESTRUCT_H_
-
 /*Node Def
         2------3
        /|     /|
@@ -29,3 +28,4 @@ struct MyCell {
       |/     |/
       4------5
 */
+#endif // __BASESTRUCT_H_

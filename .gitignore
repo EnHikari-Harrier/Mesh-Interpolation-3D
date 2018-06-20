@@ -52,3 +52,5 @@ Mkfile.old
 dkms.conf
 /.vs/Mesh-Interpolation-3D/v15
 /x64/Debug
+/input/testhead.x
+*.x

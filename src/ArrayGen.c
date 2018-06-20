@@ -13,13 +13,16 @@ struct MyCell*** CellAllocP(int ni, int nj, int nk) {
   Cell0[0] = (struct MyCell**)malloc(ni0*nj0 * sizeof(struct MyCell*));
   Cell0[0][0] = (struct MyCell*)malloc(ni0*nj0*nk0 * sizeof(struct MyCell));
   if ((Cell0 != NULL) && (Cell0[0] != NULL) && (Cell0[0][0] != NULL)) {
+    struct MyCell** Cell0pp = Cell0[0];
+    struct MyCell* Cell0p = Cell0[0][0];
     for (i = 0; i < ni0; i++) {
-      Cell0[i] = Cell0[0] + i;
+      Cell0[i] = Cell0pp + i * nj0;
       for (j = 0; j < nj0; j++) {
-        Cell0[i][j] = Cell0[i][0] + j;
+        Cell0[i][j] = Cell0p + j * nk0;
       }
+      Cell0p += nj0 * nk0;
     }
-  return Cell0;
+    return Cell0;
   }
   else {
     return NULL;
@@ -33,13 +36,16 @@ struct MyNode*** NodeAllocP(int ni, int nj, int nk) {
   Node0[0] = (struct MyNode**)malloc(ni*nj * sizeof(struct MyNode*));
   Node0[0][0] = (struct MyNode*)malloc(ni*nj*nk * sizeof(struct MyNode));
   if ((Node0 != NULL) && (Node0[0] != NULL) && (Node0[0][0] != NULL)) {
+    struct MyNode** Node0pp = Node0[0];
+    struct MyNode* Node0p = Node0[0][0];
     for (i = 0; i < ni; i++) {
-      Node0[i] = Node0[0] + i;
+      Node0[i] = Node0pp + i * nj;
       for (j = 0; j < nj; j++) {
-        Node0[i][j] = Node0[i][0] + j;
+        Node0[i][j] = Node0p + j * nk;
       }
+      Node0p += nj * nk;
     }
-  return Node0;
+    return Node0;
   }
   else {
     return NULL;
@@ -75,64 +81,9 @@ int CellConfig(struct MyCell*** Cell0, struct MyNode*** Node0, int ni, int nj, i
             }
           }
         }
+        SetFaceNode(&Cell0[i][j][k]);
       }
     }
-  }
-  return 0;
-}
-
-int MemAlloc(struct MyCell*** Cell0, struct MyNode*** Node0, int ni, int nj, int nk) {
-  int SetFaceNode(struct MyCell*);
-  int ni0 = ni - 1, nj0 = nj - 1, nk0 = nk - 1;
-  int n, i, j, k;
-  Node0 = (struct MyNode***)malloc(ni * sizeof(struct MyNode**));
-  Node0[0] = (struct MyNode**)malloc(ni*nj * sizeof(struct MyNode*));
-  Node0[0][0] = (struct MyNode*)malloc(ni*nj*nk * sizeof(struct MyNode));
-  if ((Node0 != NULL) && (Node0[0] != NULL) && (Node0[0][0] != NULL)) {
-    for (i = 0; i < ni; i++) {
-      Node0[i] = Node0[0] + i;
-      for (j = 0; j < nj; j++) {
-        Node0[i][j] = Node0[i][0] + j;
-        for (k = 0; k < nk; k++) {
-          Node0[i][j][k].i = i;
-          Node0[i][j][k].j = j;
-          Node0[i][j][k].k = k;
-        }
-      }
-    }
-  }
-  else {
-    return 1;
-  }
-  Cell0 = (struct MyCell***)malloc(ni0 * sizeof(struct MyCell**));
-  Cell0[0] = (struct MyCell**)malloc(ni0*nj0 * sizeof(struct MyCell*));
-  Cell0[0][0] = (struct MyCell*)malloc(ni0*nj0*nk0 * sizeof(struct MyCell));
-  if ((Cell0 != NULL) && (Cell0[0] != NULL) && (Cell0[0][0] != NULL)) {
-    for (i = 0; i < ni0; i++) {
-      Cell0[i] = Cell0[0] + i;
-      for (j = 0; j < nj0; j++) {
-        Cell0[i][j] = Cell0[i][0] + j;
-        for (k = 0; k < nk0; k++) {
-          int ii, jj, kk;
-          int nn = 0;
-          Cell0[i][j][k].i = i;
-          Cell0[i][j][k].j = j;
-          Cell0[i][j][k].k = k;
-          for (kk = 0; kk < 2; kk++) {
-            for (jj = 0; jj < 2; jj++) {
-              for (ii = 0; ii < 2; ii++) {
-                Cell0[i][j][k].Node[nn] = &Node0[i + ii][j + jj][k + kk];
-                nn++;
-              }
-            }
-          }
-          SetFaceNode(&Cell0[i][j][k]);
-        }
-      }
-    }
-  }
-  else {
-    return 2;
   }
   return 0;
 }
@@ -181,44 +132,64 @@ int SetFaceNode(struct MyCell* Cell0) {
   return 0;
 }
 
-int ReadConfig() {
-
-  return 0;
-}
-
 int ReadMesh(char* FileName, struct MyCell*** Cell0, struct MyNode*** Node0,
   int ni, int nj, int nk) {
-  FILE *LoadMesh;
+  FILE *MeshFile;
   int i, j, k, n;
-  int temp; double tempf;
-  printf("%p\n", &Cell0[2][2][2]);
+  int SkipLine = 11, size = 1024;
+  char *buff = (char*)malloc(size);
+
 #ifdef _WIN32
-  fopen_s(&LoadMesh, FileName, "r");
-  //LoadMesh = fopen(FileName, "r");
-  //for (i = 0; i < 11; i++) {
-  //  fscanf_s(LoadMesh);
-  //}
+  fopen_s(&MeshFile, FileName, "r");
+#else
+  MeshFile = fopen(FileName, "r");
+#endif // _WIN32
+  for (i = 0; i < SkipLine; i++) {
+    fgets(buff, size, MeshFile);
+  }
+  free(buff);
   for (n = 0; n < 3; n++) {
     for (k = 0; k < nk; k++) {
       for (j = 0; j < nj; j++) {
         for (i = 0; i < ni; i++) {
-          //fscanf(LoadMesh, "%lf", &Node0[i][j][k].Pos[n]);
-          printf("%d\t%d\t%d\n", Cell0[i][j][k].i, Cell0[i][j][k].j, Cell0[i][j][k].k);
-          fscanf(LoadMesh, "%lf", &tempf);
-          printf("%lf\n", tempf);
-          Node0[i][j][k].Pos[n] = tempf;
-          getchar();
+#ifdef _WIN32
+          fscanf_s(MeshFile, "%lf", &Node0[i][j][k].Pos[n]);
+#else
+          fscanf(MeshFile, "%lf", &Node0[i][j][k].Pos[n]);
+#endif // _WIN32
         }
       }
     }
   }
-  fscanf_s(LoadMesh, "%d\t%d\t%d", &ni, &nj, &nk);
-  //printf("%d\t%d\t%d\t%d\n", temp, ni, nj, nk);
+  return 0;
+}
+
+int ReadMesh0(char* FileName, struct MyCell*** Cell0, struct MyNode*** Node0) {
+  FILE *MeshFile;
+  int ni, nj, nk;
+  int i, j, k, n;
+
+#ifdef _WIN32
+  fopen_s(&MeshFile, FileName, "r");
+  fscanf_s(MeshFile, "%d", &n);
+  printf("%d\n", n);
+  fscanf_s(MeshFile, "%d%d%d", &ni, &nj, &nk);
+  printf("%d%d%d\n", ni, nj, nk);
 #else
-  LoadMesh = fopen(FileName, "rb");
-  fscanf(FileName, "%d", &temp);
-  fscanf(FileName, "%d\t%d\t%d", &ni, &nj, &nk);
-  printf("%d\t%d\t%d\t%d\n", temp, ni, nj, nk);
+  MeshFile = fopen(FileName, "r");
 #endif // _WIN32
+  for (n = 0; n < 3; n++) {
+    for (k = 0; k < nk; k++) {
+      for (j = 0; j < nj; j++) {
+        for (i = 0; i < ni; i++) {
+#ifdef _WIN32
+          fscanf_s(MeshFile, "%lf", &Node0[i][j][k].Pos[n]);
+#else
+          fscanf(MeshFile, "%lf", &Node0[i][j][k].Pos[n]);
+#endif // _WIN32
+        }
+      }
+    }
+  }
   return 0;
 }
