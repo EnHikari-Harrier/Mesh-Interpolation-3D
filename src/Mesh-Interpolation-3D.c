@@ -8,43 +8,46 @@
 #include <string.h>
 #include "BaseStruct.h"
 #include "ArrayGen.h"
-struct MyCell*** ThinCell,*** DenseCell;
-struct MyNode*** ThinNode,*** DenseNode;
+struct MyCell*** ThinCell, *** DenseCell;
+struct MyNode*** ThinNode, *** DenseNode;
 int ReadConfig(char* FileName);
-int niThin = 76, njThin = 51, nkThin = 2;
-int niDense = 31, njDense = 31, nkDense = 41;
+int niThin, njThin, nkThin;
+int niDense, njDense, nkDense;
 int MeshInitial(); int MeshRemove();
 char DataFileName[150], OutFileName[150];
+char ThinFileName[150], DenseFileName[150];
 int SkipLine, MirrorMesh;
 
 int main() {
+#ifdef _DEBUG
+  printf("DEBUG MODE\n");
+#endif
   ReadConfig("./input/Configure");
   MeshInitial();
 
+  printf("Calculation Done\n");
   MeshRemove();
   return 0;
 }
 
 int MeshInitial() {
+  ReadMeshInfo(ThinFileName, DenseFileName);
+  //
   ThinNode = NodeAllocP(niThin, njThin, nkThin);
   ThinCell = CellAllocP(niThin, njThin, nkThin);
   CellConfig(ThinCell, ThinNode, niThin, njThin, nkThin);
+  ReadMesh(ThinFileName, ThinCell, ThinNode);
+  //
   DenseNode = NodeAllocP(niDense, njDense, nkDense);
   DenseCell = CellAllocP(niDense, njDense, nkDense);
   CellConfig(DenseCell, DenseNode, niDense, njDense, nkDense);
-  ReadMesh0("./input/testhead2.x", ThinCell, ThinNode);
-  ReadMesh("./input/gridt.dat", ThinCell, ThinNode,
-    niThin, njThin, nkThin);
-  //ReadMesh(DataFileName, MeshCell, MeshNode, niMesh, njMesh, nkMesh);
-  //CalcuPara(MeshCell, ScanPlane, niMesh, njMesh, nkMesh);
-  //TecOut(OutFileName, ScanPlane, niMesh);
-  MeshRemove();
-  printf("Calculation Done\n");
+  ReadMesh(DenseFileName, DenseCell, DenseNode);
   return 0;
 }
 
 int MeshRemove() {
   MemFree(ThinCell, ThinNode);
+  MemFree(DenseCell, DenseNode);
   return 0;
 }
 
@@ -58,33 +61,22 @@ int ReadConfig(char* FileName) {
   fgets(buff, size, ConfigFile);  //skipline
   fgets(buff, size, ConfigFile);
   strtok_s(buff, "\n", &buffp); //cut tail :)
-  snprintf(DataFileName, sizeof(DataFileName), "%s%s%s", "./input/", buff, ".dat");
-  snprintf(OutFileName, sizeof(OutFileName), "%s%s%s", "./output/", buff, "out.dat");
-  //---------------------------------------------------
+  snprintf(ThinFileName, sizeof(ThinFileName), "%s%s", "./input/", buff);
   fgets(buff, size, ConfigFile);  //skipline
-  fscanf_s(ConfigFile, "%d\n", &SkipLine);
-  //---------------------------------------------------
-  fgets(buff, size, ConfigFile);  //skipline
-  //fscanf_s(ConfigFile, "%d%d%d\n", &niMesh, &njMesh, &nkMesh);
-  //---------------------------------------------------
-  fgets(buff, size, ConfigFile);  //skipline
-  fscanf_s(ConfigFile, "%d\n", &MirrorMesh);
+  fgets(buff, size, ConfigFile);
+  strtok_s(buff, "\n", &buffp); //cut tail :)
+  snprintf(DenseFileName, sizeof(DenseFileName), "%s%s", "./input/", buff);
+  //snprintf(OutFileName, sizeof(OutFileName), "%s%s%s", "./output/", buff, "out.dat");
 #else
   ConfigFile = fopen(FileName, "r");
   fgets(buff, size, ConfigFile);  //skipline
   fgets(buff, size, ConfigFile);
   strtok_r(buff, "\n", &buffp); //cut tail :)
-  snprintf(DataFileName, sizeof(DataFileName), "%s%s%s", "./input/", buff, ".dat");
-  snprintf(OutFileName, sizeof(OutFileName), "%s%s%s", "./output/", buff, "out.dat");
-  //---------------------------------------------------
+  snprintf(ThinFileName, sizeof(DataFileName), "%s%s", "./input/", buff);
   fgets(buff, size, ConfigFile);  //skipline
-  fscanf(ConfigFile, "%d\n", &SkipLine);
-  //---------------------------------------------------
-  fgets(buff, size, ConfigFile);  //skipline
-  fscanf(ConfigFile, "%d%d%d\n", &niMesh, &njMesh, &nkMesh);
-  //---------------------------------------------------
-  fgets(buff, size, ConfigFile);  //skipline
-  fscanf(ConfigFile, "%d\n", &MirrorMesh);
+  fgets(buff, size, ConfigFile);
+  strtok_r(buff, "\n", &buffp); //cut tail :)
+  snprintf(DenseFileName, sizeof(DataFileName), "%s%s", "./input/", buff);
 #endif // _WIN32
   fclose(ConfigFile);
   free(buff);
