@@ -13,8 +13,8 @@ struct MyNode*** ThinNode, *** DenseNode;
 int MeshInitial(); int MeshRemove();
 int niThin, njThin, nkThin;
 int niDense, njDense, nkDense;
-char ThinFileName[150], DenseFileName[150];
-int SkipLine, MirrorMesh;
+char ThinFileName[150], DenseFileName[150], ThinResultName[150];
+int SkipLine;
 
 int main() {
 #ifdef _DEBUG

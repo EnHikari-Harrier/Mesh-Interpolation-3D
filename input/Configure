@@ -2,3 +2,7 @@ FileThin
 testblock1.x
 FileDense
 testblock2.x
+ThinTecFile
+testblock1field.dat
+TecSkipLine
+12

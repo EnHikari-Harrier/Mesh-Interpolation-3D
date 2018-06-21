@@ -55,3 +55,4 @@ dkms.conf
 /input/testhead.x
 *.x
 *.dat
+*.x0

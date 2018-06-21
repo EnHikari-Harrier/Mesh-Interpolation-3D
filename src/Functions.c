@@ -3,7 +3,6 @@
 ***********************************************************************/
 #include <stdbool.h>
 #include "BaseStruct.h"
-//#include "Functions.h"
 
 int Node2Face(double CenterP[3], struct MyCell Cell0, int FaceID) {
   struct MyNode NodeList[4];
@@ -42,38 +41,42 @@ bool IsInCell(struct MyNode Node0, struct MyCell Cell0) {
   return true;
 }
 
-bool IsOverLine(double Point1[3], double Point2[3], double Point0[3]) {
-  double a, b, c;
-  a = Point1[1] - Point2[1];
-  b = Point1[0] - Point2[0];
-  c = -Point1[0] * Point2[1] + Point2[0] * Point1[1];
-  return (a * Point0[0] + b * Point0[1] + c > 0);
-}
+//bool IsOverLine(double Point1[3], double Point2[3], double Point0[3]) {
+//  double a, b, c;
+//  a = Point1[1] - Point2[1];
+//  b = Point1[0] - Point2[0];
+//  c = -Point1[0] * Point2[1] + Point2[0] * Point1[1];
+//  return (a * Point0[0] + b * Point0[1] + c > 0);
+//}
 
 int Cell2Node(struct MyNode* Node) {
   int n;
-  for (n = 0; n < NC; n++) {
-    Node->vv[n] = Node->atCell->vv[n];
+  for (n = 0; n < NS; n++) {
+    Node->PM[n] = Node->atCell->PM[n];
   }
   return 0;
 }
 
 int Node2Cell(struct MyCell * Cell) {
-  double vvtemp[NC];
+  double PMtemp[NS];
   int n;
   int ii, jj, kk;
-  for (n = 0; n < NC; n++) {
-    vvtemp[n] = 0.f;
-    int nn = 0;
-    for (kk = 0; kk < 2; kk++) {
-      for (jj = 0; jj < 2; jj++) {
-        for (ii = 0; ii < 2; ii++) {
-          vvtemp[n] = Cell->Node[nn]->vv[n];
-          nn++;
+  int nn = 0;
+  for (n = 0; n < NS; n++) {
+    PMtemp[n] = 0.f;
+  }
+  for (kk = 0; kk < 2; kk++) {
+    for (jj = 0; jj < 2; jj++) {
+      for (ii = 0; ii < 2; ii++) {
+        for (n = 0; n < NS; n++) {
+          PMtemp[n] = Cell->Node[nn]->PM[n];
         }
+        nn++;
       }
     }
-    Cell->vv[n] = vvtemp[n] / 8;
+  }
+  for (n = 0; n < NS; n++) {
+    Cell->PM[n] = PMtemp[n] / 8.f;
   }
   return 0;
 }

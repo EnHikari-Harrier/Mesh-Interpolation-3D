@@ -8,7 +8,8 @@
 #include "FileIO.h"
 extern int niThin, njThin, nkThin;
 extern int niDense, njDense, nkDense;
-extern char ThinFileName[150], DenseFileName[150];
+extern char ThinFileName[150], DenseFileName[150], ThinResultName[150];
+extern int SkipLine;
 
 int ReadConfig(char* FileName) {
   FILE *ConfigFile;
@@ -25,6 +26,12 @@ int ReadConfig(char* FileName) {
   fgets(buff, size, ConfigFile);
   strtok_s(buff, "\n", &buffp); //cut tail :)
   snprintf(DenseFileName, sizeof(DenseFileName), "%s%s", "./input/", buff);
+  fgets(buff, size, ConfigFile);  //skipline
+  fgets(buff, size, ConfigFile);
+  strtok_s(buff, "\n", &buffp); //cut tail :)
+  snprintf(ThinResultName, sizeof(ThinResultName), "%s%s", "./input/", buff);
+  fgets(buff, size, ConfigFile);  //skipline
+  fscanf_s(ConfigFile, "%d", &SkipLine);
 #else
   ConfigFile = fopen(FileName, "r");
   fgets(buff, size, ConfigFile);  //skipline
@@ -35,6 +42,12 @@ int ReadConfig(char* FileName) {
   fgets(buff, size, ConfigFile);
   strtok_r(buff, "\n", &buffp); //cut tail :)
   snprintf(DenseFileName, sizeof(DataFileName), "%s%s", "./input/", buff);
+  fgets(buff, size, ConfigFile);  //skipline
+  fgets(buff, size, ConfigFile);
+  strtok_r(buff, "\n", &buffp); //cut tail :)
+  snprintf(ThinResultName, sizeof(ThinResultName), "%s%s", "./input/", buff);
+  fgets(buff, size, ConfigFile);  //skipline
+  fscanf(ConfigFile, "%d\n", SkipLine);
 #endif // _WIN32
   fclose(ConfigFile);
   free(buff);
@@ -99,13 +112,49 @@ int ReadMesh(char* FileName, struct MyCell*** Cell0, struct MyNode*** Node0) {
   return 0;
 }
 
+int ReadThinResult(char* FileName, struct MyCell*** Cell0, int ni, int nj, int nk) {
+  FILE *TecFile;
+  int ni0 = ni - 1, nj0 = nj - 1, nk0 = nk - 1;
+  int i, j, k, n;
+  int size = 150;
+  double temp;
+  char *buff = (char*)malloc(size);
+#ifdef _WIN32
+  fopen_s(&TecFile, FileName, "r");
+  for (n = 0; n < SkipLine; n++) {
+    fgets(buff, size, TecFile);  //skipline
+  }
+  for (n = 0; n < 3; n++) {
+    for (k = 0; k < nk; k++) {
+      for (j = 0; j < nj; j++) {
+        for (i = 0; i < ni; i++) {
+          fscanf_s(TecFile, "%lf", &temp); //skip coorde
+        }
+      }
+    }
+  }
+  for (n = 0; n < NS; n++) {
+    for (k = 0; k < nk; k++) {
+      for (j = 0; j < nj; j++) {
+        for (i = 0; i < ni; i++) {
+          fscanf_s(TecFile, "%lf", &Cell0[i][j][k].PM[n]);
+        }
+      }
+    }
+  }
+#endif // _WIN32
+  fclose(TecFile);
+  return 0;
+}
+
 #ifdef _DEBUG
 int WriteMesh(char* FileName, struct MyNode*** Node0,
   int ni, int  nj, int nk) {
   FILE *TecFile;
   int i, j, k, n;
+  int Col = 0;
   char FileName0[150];
-  snprintf(FileName0, sizeof(FileName0), "%s0", FileName);
+  snprintf(FileName0, sizeof(FileName0), "%s.dat", FileName);
 #ifdef _WIN32
   fopen_s(&TecFile, FileName0, "w");
   fprintf_s(TecFile, "VARIABLES = \"x\"\n\"y\"\n\"z\"\n");
@@ -115,7 +164,14 @@ int WriteMesh(char* FileName, struct MyNode*** Node0,
     for (k = 0; k < nk; k++) {
       for (j = 0; j < nj; j++) {
         for (i = 0; i < ni; i++) {
-          fprintf_s(TecFile, "%lf\n", Node0[i][j][k].Pos[n]);
+          fprintf_s(TecFile, "%lf", Node0[i][j][k].Pos[n]);
+          if (++Col < _ColMax) {
+            fprintf_s(TecFile, "\t");
+          }
+          else {
+            fprintf_s(TecFile, "\n");
+            Col = 0;
+          }
         }
       }
     }
@@ -129,7 +185,14 @@ int WriteMesh(char* FileName, struct MyNode*** Node0,
     for (k = 0; k < nk; k++) {
       for (j = 0; j < nj; j++) {
         for (i = 0; i < ni; i++) {
-          fprintf(TecFile, "%lf\n", Node0[i][j][k].Pos[n]);
+          fprintf(TecFile, "%lf", Node0[i][j][k].Pos[n]);
+          if (++Col < _ColMax) {
+            fprintf(TecFile, "\t");
+          }
+          else {
+            fprintf(TecFile, "\n");
+            Col = 0;
+          }
         }
       }
     }
