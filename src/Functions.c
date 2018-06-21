@@ -3,7 +3,7 @@
 ***********************************************************************/
 #include <stdbool.h>
 #include "BaseStruct.h"
-#include "Functions.h"
+//#include "Functions.h"
 
 int Node2Face(double CenterP[3], struct MyCell Cell0, int FaceID) {
   struct MyNode NodeList[4];

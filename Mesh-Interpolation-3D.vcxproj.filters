@@ -24,6 +24,9 @@
     <ClInclude Include="src\ArrayGen.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\FileIO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Functions.c">
@@ -33,6 +36,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\ArrayGen.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FileIO.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

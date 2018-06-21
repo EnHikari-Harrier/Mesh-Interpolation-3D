@@ -1,11 +1,8 @@
 /***********************************************************************
-* Memory allocte & file input/output
+* Memory allocte
 ***********************************************************************/
-#include <stdio.h>
 #include <malloc.h>
 #include "BaseStruct.h"
-extern int niThin, njThin, nkThin;
-extern int niDense, njDense, nkDense;
 
 struct MyCell*** CellAllocP(int ni, int nj, int nk) {
   struct MyCell*** Cell0;
@@ -131,72 +128,5 @@ int SetFaceNode(struct MyCell* Cell0) {
   Cell0->FaceNode[5][1] = Cell0->Node[5];
   Cell0->FaceNode[5][2] = Cell0->Node[6];
   Cell0->FaceNode[5][3] = Cell0->Node[7];
-  return 0;
-}
-
-int ReadMeshInfo(char* FileNameT, char* FileNameD) {
-  FILE *MeshFileT, *MeshFileD;
-  int size = 150;
-  char *buff = (char*)malloc(size);
-#ifdef _WIN32
-  fopen_s(&MeshFileT, FileNameT, "r");
-  fgets(buff, size, MeshFileT);  //skipline
-  fscanf_s(MeshFileT, "%d%d%d\n", &niThin, &njThin, &nkThin);
-#else
-  MeshFileT = fopen(FileNameT, "r");
-  fgets(buff, size, MeshFileT);  //skipline
-  fscanf(MeshFileT, "%d%d%d\n", &niThin, &njThin, &nkThin);
-#endif
-  fclose(MeshFileT);
-#ifdef _WIN32
-  fopen_s(&MeshFileD, FileNameD, "r");
-  fgets(buff, size, MeshFileD);  //skipline
-  fscanf_s(MeshFileD, "%d%d%d\n", &niDense, &njDense, &nkDense);
-#else
-  MeshFileD = fopen(FileNameD, "r");
-  fgets(buff, size, MeshFileD);  //skipline
-  fscanf(MeshFileD, "%d%d%d\n", &niDense, &njDense, &nkDense);
-#endif // _WIN32
-  fclose(MeshFileD);
-  free(buff);
-#ifdef _DEBUG
-  printf("MeshThin\tni=%d\tnj=%d\tnk=%d\n", niThin, njThin, nkThin);
-  printf("MeshDense\tni=%d\tnj=%d\tnk=%d\n", niDense, njDense, nkDense);
-#endif // _DEBUG
-  return 0;
-}
-
-int ReadMesh(char* FileName, struct MyCell*** Cell0, struct MyNode*** Node0) {
-  FILE *MeshFile;
-  int ni, nj, nk, nb;
-  int i, j, k, n;
-#ifdef _WIN32
-  fopen_s(&MeshFile, FileName, "r");
-  fscanf_s(MeshFile, "%d\n", &nb);
-  fscanf_s(MeshFile, "%d%d%d\n", &ni, &nj, &nk);
-  for (n = 0; n < 3; n++) {
-    for (k = 0; k < nk; k++) {
-      for (j = 0; j < nj; j++) {
-        for (i = 0; i < ni; i++) {
-          fscanf_s(MeshFile, "%lf", &Node0[i][j][k].Pos[n]);
-        }
-      }
-    }
-  }
-#else
-  MeshFile = fopen(FileName, "r");
-  fscanf(MeshFile, "%d\n", &nb);
-  fscanf(MeshFile, "%d%d%d\n", &ni, &nj, &nk);
-  for (n = 0; n < 3; n++) {
-    for (k = 0; k < nk; k++) {
-      for (j = 0; j < nj; j++) {
-        for (i = 0; i < ni; i++) {
-          fscanf(MeshFile, "%lf", &Node0[i][j][k].Pos[n]);
-        }
-      }
-    }
-  }
-#endif // _WIN32
-  fclose(MeshFile);
   return 0;
 }

@@ -54,3 +54,4 @@ dkms.conf
 /x64/Debug
 /input/testhead.x
 *.x
+*.dat

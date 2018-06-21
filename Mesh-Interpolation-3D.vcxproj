@@ -117,10 +117,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseStruct.h" />
+    <ClInclude Include="src\FileIO.h" />
     <ClInclude Include="src\Functions.h" />
     <ClInclude Include="src\ArrayGen.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\FileIO.c" />
     <ClCompile Include="src\Functions.c" />
     <ClCompile Include="src\ArrayGen.c" />
     <ClCompile Include="src\Mesh-Interpolation-3D.c" />
